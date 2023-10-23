@@ -18,8 +18,8 @@ class Song {
 }
 
 class Musicplayer {
-  private List<Song> listofsongs = new LinkedList<>();
-  private List<Song> queue = new LinkedList<>();
+  private Queue<Song> listofsongs = new LinkedList<>();
+  private Queue<Song> queue = new LinkedList<>();
   private int SongIndex = -1;
   private String playMode = "Repeat all";
 
@@ -35,13 +35,14 @@ class Musicplayer {
     }
   }
 
-  public void NowPlaying() {
-    if (SongIndex >= 0 && SongIndex < queue.size()) {
-      System.out.println("Song playing " + queue.get(SongIndex));
-    } else {
-      System.out.println("Currently no song is playing ");
-    }
+public void NowPlaying() {
+  Song currentSong = queue.peek();
+  if (currentSong != null) {
+    System.out.println("Song playing: " + currentSong);
+  } else {
+    System.out.println("Currently no song is playing.");
   }
+}
 
   public List<Song> SearchSongs(String keyword) {
     List<Song> MatchingSong = new LinkedList<>();
@@ -67,39 +68,39 @@ class Musicplayer {
     }
   }
 
-  public void QueueEdit(String action, String value) {
-    if (action.equals("ADD")) {
-      List<Song> MatchingSong = SearchSongs(value);
-      if (MatchingSong.isEmpty()) {
-        System.out.println("Songs not found to add to the queue");
-      } else {
-        queue.addAll(MatchingSong);
-        System.out.println("\nAdded songs succesfully.");
-      }
-    } else if (action.equals("REMOVE")) {
-      try {
-        int SongNumber = Integer.parseInt(value);
-        if (SongNumber >= 0 && SongNumber < queue.size()) {
-          Song RemovedSong = queue.remove(SongNumber - 1);
-          System.out.println("Removed: " + RemovedSong);
+public void QueueEdit(String action, String value) {
+  if (action.equals("ADD")) {
+    List<Song> matchingSongs = SearchSongs(value);
+    if (matchingSongs.isEmpty()) {
+      System.out.println("Songs not found to add to the queue");
         } else {
-          System.out.println("Invalid input!");
-        }
-      } catch (Exception e) {
-        System.out.println("Enter a valid Song Number");
+      queue.addAll(matchingSongs);
+      System.out.println("Added songs successfully.");
+    }
+  } else if (action.equals("REMOVE")) {
+    try {
+      int songNumber = Integer.parseInt(value);
+      if (songNumber >= 0 && songNumber <= queue.size()) {
+        Song removedSong = queue.poll();
+        System.out.println("Removed: " + removedSong);
+      } else {
+        System.out.println("Invalid input!");
       }
-    }
-
-  }
-
-  public void ChangeMode(String mode) {
-    if (mode.equals("Repeat the same Song") || mode.equals("Repeat All Songs") || mode.equals("Shuffle the playlist")) {
-      playMode = mode;
-      System.out.println("Play mode set to: " + mode);
-    } else {
-      System.out.println("Invalid playing mode,please choose Between the Available Modes");
+    } catch (Exception e) {
+      System.out.println("Enter a valid Song Number");
     }
   }
+}
+
+public void ChangeMode(String mode) {
+  mode = mode.toLowerCase();
+  if (mode.equals("repeat one") || mode.equals("repeat all") || mode.equals("shuffle")) {
+    playMode = mode;
+    System.out.println("Play mode set to: " + mode);
+  } else {
+    System.out.println("Invalid playing mode, please choose between the available modes");
+  }
+}
 
   public void NextSong() {
     if (playMode.equals("Repeat the same Song")) {
@@ -199,7 +200,7 @@ public class MiniMusicPlayer {
           break;
 
         case "9":
-          System.out.println("Exiting the music player. Goodbye!");
+          System.out.println("Exiting");
           sc.close();
           System.exit(0);
 
